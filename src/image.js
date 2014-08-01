@@ -37,11 +37,6 @@ function Image(request){
   // determine the name and format (mime) of the requested image
   this.parseImage(request);
 
-  // reject this request if the image format is not correct
-  if (_.indexOf(Image.validFormats, this.format) === -1){
-    this.error = new Error(Image.formatErrorText);
-  }
-
   // determine the requested modifications
   this.modifiers = modifiers.parse(request.path);
 
@@ -60,10 +55,6 @@ function Image(request){
   // all logging strings will be queued here to be written on response
   this.log = new Logger();
 }
-
-
-Image.validFormats = ['jpeg', 'jpg', 'gif', 'png'];
-Image.formatErrorText = 'not valid image format';
 
 
 // Determine the name and format of the requested image
