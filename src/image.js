@@ -28,6 +28,9 @@ function Image(request){
   // placeholder for any error objects
   this.error = null;
 
+  // flag to stop processing
+  this.finished = null;
+
   // store the query string
   this.queryString = request.query;
 
@@ -92,7 +95,7 @@ Image.prototype.parseUrl = function(request){
 
 
 Image.prototype.isError = function(){ return this.error !== null; };
-
+Image.prototype.isFinished = function(){ return this.finished !== null; };
 
 Image.prototype.isStream = function(){
   var Stream = require('stream').Stream;

@@ -10,7 +10,7 @@ module.exports = function(){
 
   return map( function(image, callback){
 
-    if ( image.isError() ){
+    if ( image.isError() || image.isFinished() ){
       return callback(null, image);
     }
 
