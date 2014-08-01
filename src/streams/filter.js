@@ -11,8 +11,8 @@ module.exports = function(){
 
   return map(function(image, callback){
 
-    // pass through if there is an error
-    if (image.isError()){
+    // pass through if there is an error or we're done
+    if (image.isError() || image.isFinished()){
       return callback(null, image);
     }
 

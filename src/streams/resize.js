@@ -14,7 +14,7 @@ module.exports = function(){
     var d, wd, ht;
 
     // do nothing if there is an error on the image object
-    if (image.isError()){
+    if (image.isError() || image.isFinished() ){
       return callback(null, image);
     }
 
