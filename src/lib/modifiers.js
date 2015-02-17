@@ -160,10 +160,10 @@ function parseModifiers(mods, modArr) {
 
       switch(mod.desc){
       case 'height':
-        mods.height = string.sanitize(value);
+        mods.height = string.sanitize(value) || null;
         break;
       case 'width':
-        mods.width = string.sanitize(value);
+        mods.width = string.sanitize(value) || null;
         break;
       case 'square':
         mods.action = 'square';
