@@ -254,10 +254,11 @@ exports.parse = function(requestUrl, namedMods){
   }
 
   // check to see if this a metadata call, it trumps all other requested mods
-  if (image.slice(-5) === '.json'){
-    mods.action = 'json';
-    return mods;
-  }
+  // disabled
+  // if (image.slice(-5) === '.json'){
+  //   mods.action = 'json';
+  //   return mods;
+  // }
 
   if (mods.action === 'square'){
     // make sure crop is set to the default
