@@ -32,7 +32,7 @@ function Image(request){
   this.finished = null;
 
   // store the query string
-  this.queryString = util.string.fromQuery(request.query);
+  this.queryString = request.query;
 
   // set a mark for the start of the process
   this.mark = Date.now();
