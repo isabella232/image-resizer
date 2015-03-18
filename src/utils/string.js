@@ -1,7 +1,5 @@
 'use strict';
 
-var _ = require('lodash');
-
 exports.sanitize = function(value, type) {
   if (typeof type === 'undefined') {
     type = 'number';
@@ -22,13 +20,4 @@ exports.camelCase = function(input){
     .replace(/_(.)/g, function(match, letter){
       return letter.toUpperCase();
     });
-};
-
-
-// From https://github.com/TheNodeILs/lodash-contrib/blob/19f6386e/_.util.strings.js
-var plusRegex = /\+/g;
-var bracketRegex = /(?:([^\[]+))|(?:\[(.*?)\])/g;
-
-var urlDecode = function (s) {
-  return decodeURIComponent(s.replace(plusRegex, '%20'));
 };
