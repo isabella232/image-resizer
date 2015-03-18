@@ -161,16 +161,22 @@ function parseModifiers(mods, modArr) {
       switch(mod.desc){
       case 'height':
         mods.height = string.sanitize(value) || null;
-        if (mods.height && mods.height > 4000) mods.height = 4000;
+        if (mods.height && mods.height > 4000) {
+          mods.height = 4000;
+        }
         break;
       case 'width':
         mods.width = string.sanitize(value) || null;
-        if (mods.width && mods.width > 4000) mods.width = 4000;
+        if (mods.width && mods.width > 4000) {
+          mods.width = 4000;
+        }
         break;
       case 'square':
         mods.action = 'square';
-        value = string.sanitize(value);
-        if (value && value > 4000) value = 4000;
+        value = string.sanitize(value) || null;
+        if (value && value > 4000) {
+          value = 4000;
+        }
         mods.height = value;
         mods.width = value;
         break;
