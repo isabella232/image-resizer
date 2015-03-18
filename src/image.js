@@ -25,6 +25,9 @@ ErrorStream.prototype._read = function(){
 
 
 function Image(request){
+  // all logging strings will be queued here to be written on response
+  this.log = new Logger();
+  
   // placeholder for any error objects
   this.error = null;
 
@@ -51,9 +54,6 @@ function Image(request){
 
   // set the default expiry length, can be altered by a source file
   this.expiryLength = env.IMAGE_EXPIRY;
-
-  // all logging strings will be queued here to be written on response
-  this.log = new Logger();
 }
 
 
