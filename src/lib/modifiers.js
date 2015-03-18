@@ -263,13 +263,12 @@ exports.parse = function(requestUrl, modStr, namedMods){
     mods = parseModifiers(mods, modStr.split('-'));
   }
 
-  if (mods.action === 'square'){
-    // make sure crop is set to the default
-    mods.crop = 'fill';
-    return mods;
-  }
-
   if (mods.height !== null || mods.width !== null){
+    if (mods.action === 'square'){
+      // make sure crop is set to the default
+      mods.crop = 'fill';
+      return mods;
+    }
     mods.action = 'resize';
 
     if (mods.crop !== crop.default){
@@ -281,6 +280,8 @@ exports.parse = function(requestUrl, modStr, namedMods){
     if (_.has(mods, 'x') || _.has(mods, 'y')) {
       mods.action = 'crop';
     }
+  } else {
+    mods.action = 'original';
   }
 
   return mods;
