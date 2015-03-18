@@ -1,5 +1,6 @@
 'use strict';
 
+
 exports.sanitize = function(value, type) {
   if (typeof type === 'undefined') {
     type = 'number';

@@ -62,7 +62,7 @@ Image.prototype.parseUrl = function(request, qsModifiers){
   // Strip leading slash and split on slash
   var parts = request.path.replace(/^\//,'').split('/');
 
-  if (!qsModifiers || this.modifiers.action !== 'original'){
+  if (!qsModifiers && this.modifiers.action !== 'original'){
     // unless we've set keyword modifiers or this is an implicit original request, drop the first part (it'll be the modifier bit)
     // Backwards compat until we change the modifier template, remove later
     parts.shift();
