@@ -107,7 +107,7 @@ ResponseWriter.prototype._write = function(image){
       image.log.log('checksum', shasum.digest('hex'));
     }
 
-    this.response.send(200, image.contents);
+    this.response.status(200).send(image.contents);
   }
 
   // flush the log messages and close the connection
