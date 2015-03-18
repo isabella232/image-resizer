@@ -216,19 +216,19 @@ function parseModifiers(mods, modArr) {
 // Exposed method to parse an incoming URL for modifiers, can add a map of
 // named (preset) modifiers if need be (mostly just for unit testing). Named
 // modifiers are usually added via config json file in root of application.
-exports.parse = function(requestUrl, namedMods){
-  var segments, mods, modStr, image, gravity, crop;
-
-  gravity   = getModifier('g');
-  crop      = getModifier('c');
-  segments  = requestUrl.replace(/^\//,'').split('/');
-  modStr    = _.first(segments);
-  image     = _.last(segments).toLowerCase();
+exports.parse = function(requestUrl, modStr, namedMods){
+  var gravity = getModifier('g');
+  var crop = getModifier('c');
+  if (!modStr) {
+    // Backwards compat, remove this later once deployed urls all use querystrings
+    var segments = requestUrl.replace(/^\//,'').split('/');
+    modStr = _.first(segments);
+  }
   namedMods = typeof namedMods === 'undefined' ? namedModifierMap : namedMods;
 
 
   // set the mod keys and defaults
-  mods = {
+  var mods = {
     action: 'original',
     height: null,
     width: null,
@@ -256,13 +256,6 @@ exports.parse = function(requestUrl, namedMods){
   if (!env.NAMED_MODIFIERS_ONLY) {
     mods = parseModifiers(mods, modStr.split('-'));
   }
-
-  // check to see if this a metadata call, it trumps all other requested mods
-  // disabled
-  // if (image.slice(-5) === '.json'){
-  //   mods.action = 'json';
-  //   return mods;
-  // }
 
   if (mods.action === 'square'){
     // make sure crop is set to the default
