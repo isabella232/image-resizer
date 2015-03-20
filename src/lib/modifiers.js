@@ -161,16 +161,22 @@ function parseModifiers(mods, modArr) {
       switch(mod.desc){
       case 'height':
         mods.height = string.sanitize(value) || null;
-        if (mods.height && mods.height > 4000) mods.height = 4000;
+        if (mods.height && mods.height > 4000) {
+          mods.height = 4000;
+        }
         break;
       case 'width':
         mods.width = string.sanitize(value) || null;
-        if (mods.width && mods.width > 4000) mods.width = 4000;
+        if (mods.width && mods.width > 4000) {
+          mods.width = 4000;
+        }
         break;
       case 'square':
         mods.action = 'square';
-        value = string.sanitize(value);
-        if (value && value > 4000) value = 4000;
+        value = string.sanitize(value) || null;
+        if (value && value > 4000) {
+          value = 4000;
+        }
         mods.height = value;
         mods.width = value;
         break;
@@ -216,19 +222,19 @@ function parseModifiers(mods, modArr) {
 // Exposed method to parse an incoming URL for modifiers, can add a map of
 // named (preset) modifiers if need be (mostly just for unit testing). Named
 // modifiers are usually added via config json file in root of application.
-exports.parse = function(requestUrl, namedMods){
-  var segments, mods, modStr, image, gravity, crop;
-
-  gravity   = getModifier('g');
-  crop      = getModifier('c');
-  segments  = requestUrl.replace(/^\//,'').split('/');
-  modStr    = _.first(segments);
-  image     = _.last(segments).toLowerCase();
+exports.parse = function(requestUrl, modStr, namedMods){
+  var gravity = getModifier('g');
+  var crop = getModifier('c');
+  if (!modStr) {
+    // Backwards compat, remove this later once deployed urls all use querystrings
+    var segments = requestUrl.replace(/^\//,'').split('/');
+    modStr = _.first(segments);
+  }
   namedMods = typeof namedMods === 'undefined' ? namedModifierMap : namedMods;
 
 
   // set the mod keys and defaults
-  mods = {
+  var mods = {
     action: 'original',
     height: null,
     width: null,
@@ -257,20 +263,12 @@ exports.parse = function(requestUrl, namedMods){
     mods = parseModifiers(mods, modStr.split('-'));
   }
 
-  // check to see if this a metadata call, it trumps all other requested mods
-  // disabled
-  // if (image.slice(-5) === '.json'){
-  //   mods.action = 'json';
-  //   return mods;
-  // }
-
-  if (mods.action === 'square'){
-    // make sure crop is set to the default
-    mods.crop = 'fill';
-    return mods;
-  }
-
   if (mods.height !== null || mods.width !== null){
+    if (mods.action === 'square'){
+      // make sure crop is set to the default
+      mods.crop = 'fill';
+      return mods;
+    }
     mods.action = 'resize';
 
     if (mods.crop !== crop.default){
@@ -282,6 +280,8 @@ exports.parse = function(requestUrl, namedMods){
     if (_.has(mods, 'x') || _.has(mods, 'y')) {
       mods.action = 'crop';
     }
+  } else {
+    mods.action = 'original';
   }
 
   return mods;
