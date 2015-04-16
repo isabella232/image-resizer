@@ -14,7 +14,7 @@ module.exports = function(){
     }
 
     if (_.indexOf(validFormats, image.format) === -1){
-      image.error = new Error(Image.formatErrorText);
+      image.error = new Error(formatErrorText);
     }
 
     callback(null, image);
