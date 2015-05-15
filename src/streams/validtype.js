@@ -13,8 +13,9 @@ module.exports = function(){
       return callback(null, image);
     }
 
+    // Don't attempt to resize images we can't handle, just return the file data
     if (_.indexOf(validFormats, image.format) === -1){
-      image.error = new Error(formatErrorText);
+        image.finished = true;
     }
 
     callback(null, image);
