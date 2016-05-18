@@ -24,7 +24,9 @@ ErrorStream.prototype._read = function(){
 };
 
 
-function Image(request){
+function Image(request, bucket){
+  this.bucket = bucket;
+  
   // all logging strings will be queued here to be written on response
   this.log = new Logger();
   
