@@ -1,16 +1,6 @@
 version: v1.5.2
-ignore:
-  'npm:hawk:20160119':
-    - twit > request > hawk:
-        reason: No patch available
-        expires: '2016-08-05T09:40:17.391Z'
+ignore: {}
 patch:
   'npm:ms:20151024':
     - knox > debug > ms:
-        patched: '2016-07-24T21:19:07.270Z'
-  'npm:request:20160119':
-    - twit > request:
-        patched: '2016-07-24T21:19:07.270Z'
-  'npm:hawk:20160119':
-    - twit > request > hawk:
-        patched: '2016-07-24T21:19:07.270Z'
+        patched: '2016-09-22T10:16:20.987Z'
