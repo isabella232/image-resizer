@@ -1,6 +1,16 @@
-version: v1.5.2
-ignore: {}
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.7.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  'npm:ms:20170412':
+    - knox > debug > ms:
+        reason: Not vulnerable
+        expires: '2017-06-23T09:47:48.303Z'
+# patches apply the minimum changes required to fix a vulnerability
 patch:
+  'npm:ms:20170412':
+    - gm > debug > ms:
+        patched: '2017-05-24T09:47:21.113Z'
   'npm:ms:20151024':
     - knox > debug > ms:
-        patched: '2016-09-22T10:16:20.987Z'
+        patched: '2017-05-24T09:47:21.113Z'
