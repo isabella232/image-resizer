@@ -56,10 +56,7 @@ ResponseWriter.prototype._write = function(image){
   if (image.modifiers.action === 'json'){
     if (this.shouldCacheResponse()){
       this.response.set({
-        'Cache-Control':  'public',
-        'Expires':        this.expiresIn(env.JSON_EXPIRY),
-        'Last-Modified':  (new Date()).toGMTString(),
-        'Vary':           'Accept-Encoding'
+        'Cache-Control':  'max-age=' + env.JSON_EXPIRY,
       });
     }
 
@@ -71,10 +68,7 @@ ResponseWriter.prototype._write = function(image){
 
   if (this.shouldCacheResponse()){
     this.response.set({
-      'Cache-Control':  'public',
-      'Expires':        this.expiresIn(image.expiryLength),
-      'Last-Modified':  (new Date()).toGMTString(),
-      'Vary':           'Accept-Encoding'
+      'Cache-Control':  'max-age=' + image.expiryLength,
     });
   }
 
