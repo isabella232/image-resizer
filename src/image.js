@@ -37,7 +37,7 @@ function Image(request, bucket){
   this.finished = null;
 
   // store the query string
-  this.queryString = request.query;
+  this.queryString = request.query || {};
 
   // set a mark for the start of the process
   this.mark = Date.now();

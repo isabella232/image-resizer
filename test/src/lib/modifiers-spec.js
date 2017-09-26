@@ -9,21 +9,6 @@ chai.should();
 
 
 describe('Modifiers module', function(){
-
-  // Metadata calls
-  describe('Metadata request', function(){
-    it('should recognise a metadata call', function(){
-      var request = '/path/to/image.png.json';
-      mod.parse(request).action.should.equal('json');
-    });
-
-    it('should disregard modifiers in a metadata call', function(){
-      var request = '/s50-gne/path/to/image.png.json';
-      mod.parse(request).action.should.equal('json');
-    });
-  });
-
-
   // Original image
   describe('No modifiers', function(){
     it('should recognise no modifiers and return original action', function(){
@@ -137,24 +122,6 @@ describe('Modifiers module', function(){
         "external": "local"
       }
     };
-
-    it('should read a thumbnail named config and set accordingly', function(){
-      var request = '/thumb/path/to/image.png',
-          tn = nm.thumb;
-
-      mod.parse(request, nm).gravity.should.equal(tn.gravity);
-      mod.parse(request, nm).height.should.equal(tn.square);
-      mod.parse(request, nm).width.should.equal(tn.square);
-    });
-
-    it('should read a gallery named config and set accordingly', function(){
-      var request = '/gallery/path/to/image.png',
-          tn = nm.gallery;
-
-      mod.parse(request, nm).height.should.equal(tn.height);
-      mod.parse(request, nm).width.should.equal(tn.width);
-    });
-
   });
 
 });
