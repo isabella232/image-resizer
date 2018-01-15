@@ -1,6 +1,6 @@
 {
   "name": "irccloud-image-resizer",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "On-the-fly image resizing and optimization using node and graphicsmagick. Heroku ready!",
   "main": "index.js",
   "scripts": {
@@ -30,21 +30,21 @@
     "image-resizer": "./bin/image_resizer.js"
   },
   "dependencies": {
-    "aws-sdk": "^2.140.0",
+    "aws-sdk": "^2.181.0",
     "chalk": "^2.3.0",
-    "commander": "^2.11.0",
+    "commander": "^2.13.0",
     "concat-stream": "~1.6.0",
     "errorhandler": "^1.5.0",
     "express": "^4.16.2",
     "glob": "~7.1.2",
-    "gm": "^1.23.0",
+    "gm": "^1.23.1",
     "imagemin": "^5.3.1",
     "lodash": "~4.17.4",
     "map-stream": "^0.0.7",
     "mkdirp": "^0.5.1",
     "morgan": "^1.9.0",
     "request": "^2.83.0",
-    "snyk": "^1.46.0",
+    "snyk": "^1.68.0",
     "twit": "^2.2.9"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "dotenv": "~4.0.0",
     "ejs": "~2.5.7",
     "gulp": "^3.9.1",
-    "gulp-bump": "^2.8.0",
+    "gulp-bump": "^2.9.0",
     "gulp-jshint": "~2.0.4",
     "gulp-mocha": "~4.3.1",
     "gulp-nodemon": "~2.2.1",
@@ -60,7 +60,7 @@
     "jshint": "^2.9.5",
     "jshint-stylish": "~2.2.1",
     "sandboxed-module": "^2.0.3",
-    "sinon": "^4.0.2",
+    "sinon": "^4.1.5",
     "sinon-chai": "^2.14.0"
   },
   "snyk": true
