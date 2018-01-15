@@ -1,11 +1,8 @@
 'use strict';
 
-var stream, env, util, maxAge;
-
-stream = require('stream');
-env    = require('../config/environment_vars');
-util   = require('util');
-maxAge = 60 * 60 * 24 * 30; // 1 month
+var stream = require('stream');
+var env    = require('../config/environment_vars');
+var util   = require('util');
 
 
 function ResponseWriter(request, response){
@@ -21,29 +18,6 @@ function ResponseWriter(request, response){
 
 util.inherits(ResponseWriter, stream.Writable);
 
-
-ResponseWriter.prototype.expiresIn = function(maxAge){
-  var dt = Date.now();
-  dt += maxAge * 1000;
-
-  return (new Date(dt)).toGMTString();
-};
-
-
-ResponseWriter.prototype.shouldCacheResponse = function(){
-
-  if (env.development){
-    if (env.CACHE_DEV_REQUESTS){
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  return true;
-};
-
-
 ResponseWriter.prototype._write = function(image){
   if (image.isError()){
     var statusCode = image.error.statusCode || 500;
@@ -54,30 +28,10 @@ ResponseWriter.prototype._write = function(image){
   }
 
   if (image.modifiers.action === 'json'){
-    if (this.shouldCacheResponse()){
-      this.response.set({
-        'Cache-Control':  'max-age=' + env.JSON_EXPIRY,
-      });
-    }
-
     this.response.json(200, image.contents);
     image.log.flush();
 
     return this.end();
-  }
-
-  if (this.shouldCacheResponse()){
-    this.response.set({
-      'Cache-Control':  'max-age=' + image.expiryLength,
-    });
-  }
-
-  this.response.type(image.format);
-
-  if (image.lastModified) {
-    this.response.set({
-      'Last-Modified': image.lastModified
-    });
   }
 
   if (this.request.fresh) {

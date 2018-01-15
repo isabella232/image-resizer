@@ -6,7 +6,7 @@ var _   = require('lodash');
 var validFormats = ['jpeg', 'jpg', 'gif', 'png'];
 var formatErrorText = 'not valid image format';
 
-module.exports = function(){
+module.exports = function(request, response) {
 
   return map( function(image, callback){
     if ( image.isError() || image.isFinished() ){
@@ -17,6 +17,8 @@ module.exports = function(){
     if (_.indexOf(validFormats, image.format) === -1){
         image.finished = true;
     }
+
+    response.type(image.format);
 
     callback(null, image);
   });
