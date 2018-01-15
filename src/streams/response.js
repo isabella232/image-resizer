@@ -74,11 +74,17 @@ ResponseWriter.prototype._write = function(image){
 
   this.response.type(image.format);
 
-  if (image.isStream()){
-    image.contents.pipe(this.response);
+  if (image.lastModified) {
+    this.response.set({
+      'Last-Modified': image.lastModified
+    });
   }
 
-  else {
+  if (this.request.fresh) {
+    this.response.status(304).send(null);
+  } else if (image.isStream()){
+    image.contents.pipe(this.response);
+  } else {
     image.log.log(
       'original image size:',
       image.log.colors.grey(

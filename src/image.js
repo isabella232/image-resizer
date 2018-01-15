@@ -56,6 +56,8 @@ function Image(request, bucket){
 
   // set the default expiry length, can be altered by a source file
   this.expiryLength = env.IMAGE_EXPIRY;
+
+  this.lastModified = null;
 }
 
 
