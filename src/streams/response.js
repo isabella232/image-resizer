@@ -27,12 +27,15 @@ ResponseWriter.prototype._write = function(image){
     return this.end();
   }
 
-  if (image.modifiers.action === 'json'){
+  if (image.modifiers.action === 'json') {
     this.response.json(200, image.contents);
     image.log.flush();
 
     return this.end();
   }
+
+
+  this.response.type(image.format);
 
   if (this.request.fresh) {
     this.response.status(304).send(null);
