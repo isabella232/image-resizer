@@ -55,6 +55,11 @@ module.exports = function(){
     if (env.REMOVE_METADATA){
       r.noProfile();
     }
+    // Sensible limits copied from fileinfodriver.py and irccloud_file_upload.erl
+    ['Disk', 'Memory', 'Map'].forEach(function (limit) {
+      r.limit(limit, '50M');
+    });
+    r.limit('Pixels', '15M');
 
     switch(image.modifiers.action){
     case 'resize':
