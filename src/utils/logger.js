@@ -65,7 +65,10 @@ Logger.prototype.flush = function(){
   }
 
   var log = '';
-  _.each(this.queue, function(item){
+  _.each(this.queue, function(item, i){
+    if (i > 0) {
+      log += '\n';
+    }
     log += '[' + chalk.green(prefix) + '] ';
     switch(item.method){
     case 'log':
@@ -84,7 +87,6 @@ Logger.prototype.flush = function(){
       );
       break;
     }
-    log += '\n';
   });
 
   console.log(log);
