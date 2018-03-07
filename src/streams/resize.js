@@ -151,7 +151,7 @@ module.exports = function(){
     ['Disk', 'Memory', 'Map'].forEach(function (limit) {
       r.limit(limit, '50M');
     });
-    r.limit('Pixels', '15M');
+    r.limit('Pixels', '25M');
 
     r.identify('%wx%h', function (err, data) {
       if (err) {
@@ -161,9 +161,9 @@ module.exports = function(){
           image.log.log('identify dimensions', data);
           var dims = data.split('x');
           // ?MAX_RES from irccloud_file_upload.erl
-          // We set Pixels 15M earlier but this allows us to send an
+          // We set Pixels 25M earlier but this allows us to send an
           // appropriate error response
-          if (dims[0] * dims[1] > 15000000) {
+          if (dims[0] * dims[1] > 25000000) {
             image.error = new Error('image too large');
             image.error.statusCode = 410;
             callback(null, image);
