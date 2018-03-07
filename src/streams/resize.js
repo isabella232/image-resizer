@@ -147,12 +147,13 @@ module.exports = function(){
     // create the gm stream
     var r = gm(image.contents, image.format);
 
-    // Sensible limits copied from fileinfodriver.py and irccloud_file_upload.erl
+    // Need larger resource limits than infodriver for resizing
     ['Disk', 'Memory', 'Map'].forEach(function (limit) {
-      r.limit(limit, '50M');
+      r.limit(limit, '200M');
     });
+    // Use same pixel limit as irccloud_file_upload.erl
     r.limit('Pixels', '25M');
-
+    
     r.identify('%wx%h', function (err, data) {
       if (err) {
           image.error = new Error('identify error: ' + err);

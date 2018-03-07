@@ -1,6 +1,6 @@
 {
   "name": "irccloud-image-resizer",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "On-the-fly image resizing and optimization using node and graphicsmagick. Heroku ready!",
   "main": "index.js",
   "scripts": {
