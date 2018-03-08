@@ -146,6 +146,9 @@ module.exports = function(){
 
     // create the gm stream
     var r = gm(image.contents, image.format);
+    // We aren't resizing gifs at the moment, but limit frames
+    // in case we end up doing so.
+    r.sourceFrames = '[0]';
 
     // Need larger resource limits than infodriver for resizing
     ['Disk', 'Memory', 'Map'].forEach(function (limit) {
@@ -153,23 +156,28 @@ module.exports = function(){
     });
     // Use same pixel limit as irccloud_file_upload.erl
     r.limit('Pixels', '25M');
-    
-    r.identify('%wx%h', function (err, data) {
+    r.identify('%wx%h\\n', function (err, data) {
       if (err) {
           image.error = new Error('identify error: ' + err);
           callback(null, image);
       } else {
-          image.log.log('identify dimensions', data);
-          var dims = data.split('x');
-          // ?MAX_RES from irccloud_file_upload.erl
-          // We set Pixels 25M earlier but this allows us to send an
-          // appropriate error response
-          if (dims[0] * dims[1] > 25000000) {
-            image.error = new Error('image too large');
+          var dims = data.match(/(\d+)x(\d+)/);
+          if (dims) {
+            image.log.log('identify dimensions', dims[1], dims[2]);
+            // ?MAX_RES from irccloud_file_upload.erl
+            // We set Pixels 25M earlier but this allows us to send an
+            // appropriate error response
+            if (dims[1] * dims[2] > 25000000) {
+              image.error = new Error('image too large');
+              image.error.statusCode = 410;
+              callback(null, image);
+            } else {
+              resize(r, image, callback);
+            }
+          } else {
+            image.error = new Error('invalid image dimensions: ' + data);
             image.error.statusCode = 410;
             callback(null, image);
-          } else {
-            resize(r, image, callback);
           }
       }
     });
