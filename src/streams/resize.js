@@ -7,20 +7,8 @@ env  = require('../config/environment_vars');
 dims = require('../lib/dimensions');
 map  = require('map-stream');
 
-function resize (r, image, callback) {
+function resize (r, image, size, callback) {
   // handle the stream response for any of the resizing actions
-  var timeLabel = 'resize [' + (image.modifiers.action || '') + ']';
-  var streamResponse = function(err, data){
-    if (err) {
-      image.error = new Error('resize error: ' + err);
-    } else {
-      image.contents = data;
-    }
-    image.log.timeEnd(timeLabel);
-    callback(null, image);
-  };
-
-  image.log.time(timeLabel);
 
   // auto orient the image, so it is always the correct way up
   if (env.AUTO_ORIENT){
@@ -34,6 +22,30 @@ function resize (r, image, callback) {
 
   var d, wd, ht;
 
+  var streamResponse = function (err, stdout, stderr) {
+    // err is always null from r.stream() calls
+    if (err) {
+      image.error = new Error('resize error: ' + err);
+    } else {
+      image.contents = stdout;
+    }
+
+    if (stderr) {
+      var _stderr = '';
+      stderr.on('data', function (chunk) {
+        _stderr += chunk.toString('utf8');
+      });
+      stderr.once('end', function () {
+        if (_stderr) {
+          image.error = new Error('resize stderror: ' + _stderr.trim());
+        }
+      });
+      stderr.read();
+    }
+
+    callback(null, image);
+  };
+
   switch (image.modifiers.action) {
   case 'resize':
     r.resize(image.modifiers.width, image.modifiers.height);
@@ -41,16 +53,33 @@ function resize (r, image, callback) {
     break;
 
   case 'square':
-    r.size(function (err, size) {
-      if (err) {
-        image.error = new Error('square error: ' + err);
-        callback(null, image);
-        return;
-      }
+    d = dims.cropFill(image.modifiers, size);
 
+    // resize then crop the image
+    r.resize(
+      d.resize.width,
+      d.resize.height
+    ).crop(
+      d.crop.width,
+      d.crop.height,
+      d.crop.x,
+      d.crop.y
+    );
+
+    // send the stream to the completion handler
+    r.stream(streamResponse);
+    break;
+
+  case 'crop':
+    switch (image.modifiers.crop) {
+    case 'fit':
+      r.resize(image.modifiers.width, image.modifiers.height);
+      break;
+    case 'fill':
       d = dims.cropFill(image.modifiers, size);
 
-      // resize then crop the image
+      // TODO: need to account for null height or width
+
       r.resize(
         d.resize.width,
         d.resize.height
@@ -60,66 +89,31 @@ function resize (r, image, callback) {
         d.crop.x,
         d.crop.y
       );
+      break;
+    case 'cut':
+      wd = image.modifiers.width || image.modifiers.height;
+      ht = image.modifiers.height || image.modifiers.width;
 
-      // send the stream to the completion handler
-      r.stream(streamResponse);
-    });
+      d = dims.gravity(
+        image.modifiers.gravity,
+        size.width,
+        size.height,
+        wd,
+        ht
+      );
+      r.crop(wd, ht, d.x, d.y);
+      break;
+    case 'scale':
+      r.resize(image.modifiers.width, image.modifiers.height, '!');
+      break;
+    }
 
-    break;
-
-  case 'crop':
-    r.size(function (err, size) {
-      if (err) {
-        image.error = new Error('crop error: ' + err);
-        callback(null, image);
-        return;
-      }
-
-      switch (image.modifiers.crop) {
-      case 'fit':
-        r.resize(image.modifiers.width, image.modifiers.height);
-        break;
-      case 'fill':
-        d = dims.cropFill(image.modifiers, size);
-
-        // TODO: need to account for null height or width
-
-        r.resize(
-          d.resize.width,
-          d.resize.height
-        ).crop(
-          d.crop.width,
-          d.crop.height,
-          d.crop.x,
-          d.crop.y
-        );
-        break;
-      case 'cut':
-        wd = image.modifiers.width || image.modifiers.height;
-        ht = image.modifiers.height || image.modifiers.width;
-
-        d = dims.gravity(
-          image.modifiers.gravity,
-          size.width,
-          size.height,
-          wd,
-          ht
-        );
-        r.crop(wd, ht, d.x, d.y);
-        break;
-      case 'scale':
-        r.resize(image.modifiers.width, image.modifiers.height, '!');
-        break;
-      }
-
-      r.stream(streamResponse);
-    });
-
+    r.stream(streamResponse);
     break;
 
 
   case 'original' :
-    r.toBuffer(streamResponse);
+    r.stream(streamResponse);
     break;
 
   }
@@ -156,23 +150,24 @@ module.exports = function(){
     });
     // Use same pixel limit as irccloud_file_upload.erl
     r.limit('Pixels', '25M');
-    r.identify('%wx%h\\n', function (err, data) {
+    image.log.time('dimensions');
+    r.size(function (err, size) {
+      image.log.timeEnd('dimensions');
       if (err) {
-          image.error = new Error('identify error: ' + err);
+          image.error = new Error('dimensions error: ' + err);
           callback(null, image);
       } else {
-          var dims = data.match(/(\d+)x(\d+)/);
-          if (dims) {
-            image.log.log('identify dimensions', dims[1], dims[2]);
+          if (size) {
+            image.log.log('dimensions', size.width, size.height);
             // ?MAX_RES from irccloud_file_upload.erl
             // We set Pixels 25M earlier but this allows us to send an
             // appropriate error response
-            if (dims[1] * dims[2] > 25000000) {
+            if (size.width * size.height > 25000000) {
               image.error = new Error('image too large');
               image.error.statusCode = 410;
               callback(null, image);
             } else {
-              resize(r, image, callback);
+              resize(r, image, size, callback);
             }
           } else {
             image.error = new Error('invalid image dimensions: ' + data);

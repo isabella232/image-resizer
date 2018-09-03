@@ -39,37 +39,26 @@ ResponseWriter.prototype._write = function(image){
 
   if (this.request.fresh) {
     this.response.status(304).send(null);
+    image.log.flush();
+    return this.end();
   } else if (image.isStream()){
-    image.contents.pipe(this.response);
+    var resp = this.response;
+    image.contents.once('end', () => {
+      if (image.isError()){
+        var statusCode = image.error.statusCode || 500;
+        this.response.status(statusCode).send(null);
+        image.log.error(image.error.message);
+      }
+      image.log.flush();
+      this.end();
+    });
+    return image.contents.pipe(this.response);
   } else {
-    image.log.log(
-      'original image size:',
-      image.log.colors.grey(
-        (image.originalContentLength/1000).toString() + 'kb'
-      )
-    );
-    image.log.log(
-      // 'reduction:',
-      // image.log.colors.grey((image.sizeReduction()).toString() + 'kb')
-      'size saving:',
-      image.log.colors.grey(image.sizeSaving() + '%')
-    );
-
-    // as a debugging step print a checksum for the modified image, so we can
-    // track to see if the image is replicated effectively between requests
-    if (env.development){
-      var crypto = require('crypto'),
-          shasum = crypto.createHash('sha1');
-      shasum.update(image.contents);
-      image.log.log('checksum', shasum.digest('hex'));
-    }
-
     this.response.status(200).send(image.contents);
-  }
 
-  // flush the log messages and close the connection
-  image.log.flush();
-  this.end();
+    image.log.flush();
+    return this.end();
+  }
 };
 
 

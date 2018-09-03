@@ -3,7 +3,7 @@
 var map = require('map-stream');
 var _   = require('lodash');
 
-var validFormats = ['jpeg', 'jpg', 'gif', 'png', 'webp'];
+var validFormats = ['jpeg', 'jpg', 'png', 'webp'];
 var formatErrorText = 'not valid image format';
 
 module.exports = function(request, response) {
