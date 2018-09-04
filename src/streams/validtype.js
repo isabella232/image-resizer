@@ -12,6 +12,7 @@ function webpmux (args, options) {
 }
 
 function stripMetadata (image, type) {
+  image.log.log('stripping ' + type);
   var w = webpmux(['-strip', type, '-o', '-', '--', '-'], {
     input: image.contents
   });
@@ -21,35 +22,43 @@ function stripMetadata (image, type) {
 }
 
 function processWebp (image, callback) {
-  var isAnimated = false;
-  var hasEXIF = false;
-  var hasXMP = false;
-
+  image.log.time('webpmux');
   var w = webpmux(['-info', '-'], {
     input: image.contents
   });
   if (w.status == 0) {
     var data = w.stdout.toString('utf8');
-    hasEXIF = !!data.match(/^Size of the EXIF metadata/m);
-    hasXMP = !!data.match(/^Size of the XMP metadata/m);
+
+    if (data.match(/^Size of the EXIF metadata/m)) {
+      stripMetadata(image, 'exif');
+    }
+    if (data.match(/^Size of the XMP metadata/m)) {
+      stripMetadata(image, 'xmp');
+    }
+
+    var canvasMatch = data.match(/^Canvas size: (\d+) x (\d+)$/m);
+    if (canvasMatch) {
+      var dimensions = {
+        width: canvasMatch[1] - 0,
+        height: canvasMatch[2] - 0
+      };
+      image.dimensions = dimensions;
+    }
+
     var frameMatch = data.match(/^Number of frames: (\d+)$/m);
     if (frameMatch) {
       var frames = frameMatch[1] - 0;
-      isAnimated = frames > 1;
-      image.log.log('skipping animated webp (frames: ' + frames + ')');
-    }
-
-    if (hasEXIF) {
-      stripMetadata(image, 'exif');
-    }
-    if (hasXMP) {
-      stripMetadata(image, 'xmp');
-    }
-    if (isAnimated) {
-      // Animated webps can't be resized, mark as finished
-      image.finished = true;
+      if (frames > 1) {
+        // Animated webps can't be resized, mark as finished
+        image.log.log('skipping resize for animated webp (frames: ' + frames + ')');
+        if (image.dimensions) {
+          image.log.log('dimensions', image.dimensions.width, image.dimensions.height);
+        }
+        image.finished = true;
+      }
     }
   }
+  image.log.timeEnd('webpmux');
   callback(null, image);
 }
 

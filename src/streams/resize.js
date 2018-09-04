@@ -27,6 +27,10 @@ function resize (r, image, size, callback) {
     if (err) {
       image.error = new Error('resize error: ' + err);
     } else {
+      image.log.time('gm resize');
+      stdout.once('data', function () {
+        image.log.timeEnd('gm resize');
+      });
       image.contents = stdout;
     }
 
@@ -119,6 +123,18 @@ function resize (r, image, size, callback) {
   }
 }
 
+function dimensions (r, image, next) {
+  if (image.dimensions) {
+    next(null, image.dimensions);
+  } else {
+    image.log.time('gm dimensions');
+    r.size(function (err, size) {
+      image.log.timeEnd('gm dimensions');
+      next(null, size);
+    });
+  }
+}
+
 module.exports = function(){
 
   return map(function (image, callback) {
@@ -150,9 +166,7 @@ module.exports = function(){
     });
     // Use same pixel limit as irccloud_file_upload.erl
     r.limit('Pixels', '25M');
-    image.log.time('dimensions');
-    r.size(function (err, size) {
-      image.log.timeEnd('dimensions');
+    dimensions(r, image, function (err, size) {
       if (err) {
           image.error = new Error('dimensions error: ' + err);
           callback(null, image);
