@@ -1,6 +1,6 @@
 {
   "name": "irccloud-image-resizer",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "On-the-fly image resizing and optimization using node and graphicsmagick. Heroku ready!",
   "main": "index.js",
   "scripts": {
@@ -30,38 +30,38 @@
     "image-resizer": "./bin/image_resizer.js"
   },
   "dependencies": {
-    "aws-sdk": "^2.307.0",
-    "chalk": "^2.4.1",
-    "commander": "^2.17.1",
-    "concat-stream": "^1.6.2",
+    "aws-sdk": "^2.437.0",
+    "chalk": "^2.4.2",
+    "commander": "^2.20.0",
+    "concat-stream": "^2.0.0",
     "errorhandler": "^1.5.0",
-    "express": "^4.16.3",
+    "express": "^4.16.4",
     "glob": "^7.1.3",
     "gm": "^1.23.1",
-    "imagemin": "^6.0.0",
-    "lodash": "^4.17.10",
+    "imagemin": "^6.1.0",
+    "lodash": "^4.17.11",
     "map-stream": "^0.0.7",
     "mkdirp": "^0.5.1",
-    "morgan": "^1.9.0",
+    "morgan": "^1.9.1",
     "request": "^2.88.0",
-    "snyk": "^1.94.0",
+    "snyk": "^1.149.0",
     "twit": "^2.2.11"
   },
   "devDependencies": {
-    "chai": "~4.1.2",
-    "dotenv": "^6.0.0",
+    "chai": "^4.2.0",
+    "dotenv": "^7.0.0",
     "ejs": "^2.6.1",
-    "gulp": "^3.9.1",
-    "gulp-bump": "^3.1.1",
+    "gulp": "^4.0.0",
+    "gulp-bump": "^3.1.3",
     "gulp-jshint": "~2.1.0",
     "gulp-mocha": "^6.0.0",
-    "gulp-nodemon": "^2.2.1",
+    "gulp-nodemon": "^2.4.2",
     "gulp-util": "~3.0.8",
-    "jshint": "^2.9.6",
+    "jshint": "^2.10.2",
     "jshint-stylish": "~2.2.1",
     "sandboxed-module": "^2.0.3",
-    "sinon": "^6.1.5",
-    "sinon-chai": "^3.2.0"
+    "sinon": "^7.3.1",
+    "sinon-chai": "^3.3.0"
   },
   "snyk": true
 }
