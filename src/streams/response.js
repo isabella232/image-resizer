@@ -38,7 +38,7 @@ ResponseWriter.prototype._write = function(image){
   this.response.type(image.format);
 
   if (this.request.fresh) {
-    this.response.status(304).send(null);
+    this.response.status(304);
     image.log.flush();
     return this.end();
   } else if (image.isStream()){
@@ -46,7 +46,7 @@ ResponseWriter.prototype._write = function(image){
     image.contents.once('end', () => {
       if (image.isError()){
         var statusCode = image.error.statusCode || 500;
-        this.response.status(statusCode).send(null);
+        this.response.status(statusCode);
         image.log.error(image.error.message);
       }
       image.log.flush();
